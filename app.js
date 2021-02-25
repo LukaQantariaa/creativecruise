@@ -1,4 +1,5 @@
 
+
 class Sketch {
   constructor() {
 
@@ -19,16 +20,43 @@ class Sketch {
     this.phi = 0.5 + Math.sqrt(5)/2;
     console.log(this.phi)
 
-    this.add();
-    this.addLines();
-    this.render();
+    // this.add();
+    // this.addLines();
+    // this.render();
+    this.preloadAssets();
 
     console.log(this.app.renderer.width)
   }
 
+  preloadAssets() {
+
+    this.app.loader.baseUrl = "img";
+    this.app.loader.add('river', 'river.png');
+    this.app.loader.add('city', 'city.png');
+
+    this.app.loader.onComplete.add(() => {
+      this.add();
+      this.addLines();
+      this.render();
+    });
+
+    this.app.loader.onError.add((e) => {
+      console.log(e)
+    });
+
+    this.app.loader.load();
+  }
+
+  getRiver() {
+    let river = new PIXI.Sprite.from(this.app.loader.resources['river'].texture);
+    river.width = 500;
+    river.height = 500;
+    return river;
+  }
+
   addLines() {
     this.ctx = new PIXI.Graphics();
-    this.ctx.lineStyle(2, 0xff0000, 1)
+    this.ctx.lineStyle(2, 0xff0000, 0.5)
 
     let lastRight = this.width;
     let lastBottom = lastRight / this.phi;
@@ -110,7 +138,8 @@ class Sketch {
   }
 
   add() {
-    
+    // let river = this.getRiver();
+    // this.container.addChild(river);
   }
 
   render() {
