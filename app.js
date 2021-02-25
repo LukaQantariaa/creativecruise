@@ -8,7 +8,7 @@ class Sketch {
     this.time = 1;
 
     this.app = new PIXI.Application({
-      backgroundColor: 0x1099bb, 
+      backgroundColor: 0xfac0ae,
       resolution: window.devicePixelRatio || 1,
       resizeTo: window
     });
@@ -142,7 +142,7 @@ class Sketch {
     this.ctx.moveTo(lastLeft, tempVertical);
     this.ctx.arc(lastLeft, tempVertical, lastRight - lastLeft, 1.5 * Math.PI, 0);
 
-    this.container.addChild(this.ctx)
+    this.containerSpiral.addChild(this.ctx)
 
   }
 
@@ -169,7 +169,7 @@ class Sketch {
     block.position.set(this.centerX, this.centerY);
     this.container.addChild(block);
 
-    for(let i=-10; i<20; i++) {
+    for(let i=-100; i<2000; i++) {
       let containerRiver = new PIXI.Container();
       let containerCity = new PIXI.Container();
       let angle = i * Math.PI/2;
