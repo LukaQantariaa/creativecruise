@@ -5,6 +5,7 @@ class Sketch {
 
     this.width = window.innerWidth;
     this.height = window.innerHeight;
+    this.time = 1;
 
     this.app = new PIXI.Application({
       backgroundColor: 0x1099bb, 
@@ -14,15 +15,15 @@ class Sketch {
     document.body.appendChild(this.app.view);
     
     this.container = new PIXI.Container();
+    this.containerSpiral = new PIXI.Container();
     
     this.app.stage.addChild(this.container);
+    this.app.stage.addChild(this.containerSpiral);
 
     this.phi = 0.5 + Math.sqrt(5)/2;
     console.log(this.phi)
+    this.center = 0.7237;
 
-    // this.add();
-    // this.addLines();
-    // this.render();
     this.preloadAssets();
 
     console.log(this.app.renderer.width)
@@ -36,6 +37,7 @@ class Sketch {
 
     this.app.loader.onComplete.add(() => {
       this.add();
+      this.addStuff();
       this.addLines();
       this.render();
     });
@@ -52,6 +54,13 @@ class Sketch {
     river.width = 500;
     river.height = 500;
     return river;
+  }
+
+  getCity() {
+    let city = new PIXI.Sprite.from(this.app.loader.resources['city'].texture);
+    city.width = 500;
+    city.height = 500;
+    return city;
   }
 
   addLines() {
@@ -137,14 +146,73 @@ class Sketch {
 
   }
 
+  getBlock() {
+    let block = new PIXI.Sprite(PIXI.Texture.WHITE);
+    block.tint = 0xff0000*Math.random();
+    block.alpha = 0.5;
+    block.width = 10;
+    block.height = 10;
+    return block;
+  }
+
+  addStuff() {
+    this.centerX = this.width*this.center;
+    this.centerY = this.width*this.center/this.phi;
+
+    this.container.pivot.set(this.centerX, this.centerY);
+    this.container.position.set(this.centerX, this.centerY);
+
+    let block = new PIXI.Sprite(PIXI.Texture.WHITE);
+    block.tint = 0xff0000;
+    block.width = 10;
+    block.height = 10;
+    block.position.set(this.centerX, this.centerY);
+    this.container.addChild(block);
+
+    for(let i=-10; i<20; i++) {
+      let containerRiver = new PIXI.Container();
+      let containerCity = new PIXI.Container();
+      let angle = i * Math.PI/2;
+      let scale = Math.pow(1/this.phi,i);
+
+      let bl = this.getRiver();
+      bl.width = this.width/this.phi;
+      bl.height = this.width/this.phi;
+
+      let cityBl = this.getCity();
+      cityBl.width = this.width/this.phi;
+      cityBl.height = this.width/this.phi;
+
+
+      bl.position.set(-this.centerX, -this.centerY);
+      cityBl.position.set(-this.centerX, -this.centerY);
+
+      containerRiver.rotation = angle;
+      containerRiver.scale.set(scale*0.75);
+      containerRiver.position.set(this.centerX, this.centerY);
+
+      containerCity.rotation = angle;
+      containerCity.scale.set(scale);
+      containerCity.position.set(this.centerX, this.centerY);
+
+      containerRiver.addChild(bl)
+      containerCity.addChild(cityBl)
+
+      this.container.addChild(containerCity);
+      this.container.addChild(containerRiver);
+    }
+  }
+
   add() {
     // let river = this.getRiver();
-    // this.container.addChild(river);
+    // this.containerSpiral.addChild(river);
   }
 
   render() {
     this.app.ticker.add( (delta) => {
-      // console.log(delta)
+      this.time += 0.01;
+      this.container.rotation = this.time;
+      this.container.scale.set(Math.pow(1/this.phi, this.time/(Math.PI/2)))
     })
   }
 
